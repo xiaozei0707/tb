@@ -1,5 +1,5 @@
 name: Image Workflow
-1
+
 on:
   push:
     paths:
