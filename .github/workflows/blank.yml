@@ -3,29 +3,24 @@ name: Image Workflow
 on:
   push:
     paths:
-      - 'icon/**'
+      - 'icon/**' # 监视 icons 文件夹及其子文件夹下的内容
   pull_request:
     paths:
-      - 'icon/**'
+      - 'icon/**' # 监视 icons 文件夹及其子文件夹下的内容
   workflow_dispatch:
-
-# ⭐ 关键：给 Actions 写仓库的权限
-permissions:
-  contents: write
 
 jobs:
   generate_json:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
 
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v4
       with:
-        python-version: '3.11'
+        python-version: '3.x'
 
     - name: Install dependencies
       run: |
@@ -35,17 +30,21 @@ jobs:
     - name: Generate JSON
       run: |
         python .github/scripts/generate_image_json.py
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: json-artifact
-        path: sarff0707.icons.json
+        path: ${{ github.workspace }}/sarff0707.icons.json
 
-    - name: Commit & push changes
+    - name: Push to QuantumultX Repository
       run: |
-        git config user.name "github-actions"
-        git config user.email "github-actions@github.com"
-        git add sliverkiss.icons.json
-        git diff --cached --quiet || git commit -m "自动更新图标仓库"
-        git push
+        git config user.name "${{ github.actor }}"
+        git config user.email "${{ github.actor }}@users.noreply.github.com"
+        git add .
+        git commit -m "自动更新图标仓库"
+        git push origin HEAD:main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
