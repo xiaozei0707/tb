@@ -6,7 +6,7 @@ def generate_json():
     json_data = {
         "name": "sarff图标订阅",
         "description": "收集一些自己脚本用到的图标",
-        "icons": [https://github.com/xiaozei0707/tb/blob/main/icon/sarff.png]
+        "icons": ["https://github.com/xiaozei0707/tb/blob/main/icon/sarff.png"]
     }
 
     for filename in os.listdir(image_folder):
